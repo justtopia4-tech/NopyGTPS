@@ -27,9 +27,15 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
       box-shadow: 0 6px 24px rgba(0,0,0,0.5);
       color: #e8ecf4;
     }
+    @keyframes borderShift {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
     .login-card::before {
       content: ''; position: absolute; inset: -1px; border-radius: 17px;
-      background: linear-gradient(135deg, #00c8ff, #8a2be2);
+      background: linear-gradient(135deg, #00c8ff, #8a2be2, #00c8ff);
+      background-size: 200% 200%;
+      animation: borderShift 5s linear infinite;
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor; mask-composite: exclude;
       padding: 1px; pointer-events: none; opacity: 0.9;
