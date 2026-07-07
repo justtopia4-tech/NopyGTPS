@@ -466,7 +466,7 @@ app.all(
       console.log(`[LOGIN] GrowID: ${growId} | Token built successfully`);
 
       res.status(200).type('text/plain').send(
-        `status=success&token=${token}&url=&accountType=growtopia`,
+        `status=success&token=${encodeURIComponent(token)}&url=&accountType=growtopia`,
       );
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
@@ -563,7 +563,7 @@ const handleCheckToken = async (req: Request, res: Response) => {
       ).toString('base64');
 
       res.status(200).type('text/plain').send(
-        `status=success&token=${token}&url=&accountType=growtopia&accountAge=2`,
+        `status=success&token=${encodeURIComponent(token)}&url=&accountType=growtopia&accountAge=2`,
       );
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
