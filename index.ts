@@ -22,60 +22,26 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
     .login-card {
       position: relative; z-index: 1; width: 290px; max-width: 85vw;
       padding: 14px 12px; border-radius: 16px;
-      background: rgba(20, 25, 50, 0.65);
-      backdrop-filter: blur(24px) saturate(1.4);
-      -webkit-backdrop-filter: blur(24px) saturate(1.4);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 6px 24px rgba(0,0,0,0.5), 0 0 40px rgba(0,180,255,0.06),
-        inset 0 1px 0 rgba(255,255,255,0.06);
-      color: #e8ecf4; border-radius: 16px;
+      background: rgba(20, 25, 50, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+      color: #e8ecf4;
     }
     .login-card::before {
       content: ''; position: absolute; inset: -1px; border-radius: 17px;
-      background: linear-gradient(135deg, #00c8ff, #8a2be2, #00ffb4, #00c8ff);
-      background-size: 300% 300%;
+      background: linear-gradient(135deg, #00c8ff, #8a2be2);
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor; mask-composite: exclude;
       padding: 1px; pointer-events: none; opacity: 0.9;
-      animation: borderFlow 8s linear infinite;
-    }
-    .login-card::after {
-      content: ''; position: absolute; inset: 0; border-radius: 16px;
-      box-shadow: 0 0 50px rgba(0,200,255,0.2), 0 0 90px rgba(138,43,226,0.12);
-      animation: cardBreath 5s ease-in-out infinite;
-      pointer-events: none; z-index: -1;
-    }
-    @keyframes borderFlow {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    @keyframes cardBreath {
-      0%,100% { opacity: 0.6; }
-      50% { opacity: 1; }
     }
     .logo-area { text-align: center; margin-bottom: 4px; position: relative; }
     .logo-area img {
       width: 72px; height: 72px; object-fit: contain;
       filter: drop-shadow(0 0 12px rgba(0,180,255,0.6));
-      animation: logoPulse 3s ease-in-out infinite;
-    }
-    @keyframes logoPulse {
-      0%,100% { filter: drop-shadow(0 0 12px rgba(0,180,255,0.6)); transform: scale(1); }
-      50% { filter: drop-shadow(0 0 24px rgba(0,220,255,0.9)); transform: scale(1.05); }
     }
     h2 {
       text-align: center; font-size: 0.95rem; font-weight: 600; margin-bottom: 12px;
-      letter-spacing: -0.02em;
-      background: linear-gradient(90deg, #ffffff, #a0d8ff, #ffffff, #c3a6ff, #ffffff);
-      background-size: 200% auto;
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: titleShimmer 6s linear infinite;
-    }
-    @keyframes titleShimmer {
-      0% { background-position: 0% center; }
-      100% { background-position: 200% center; }
+      letter-spacing: -0.02em; color: #ffffff;
     }
     .form-group { margin-bottom: 8px; }
     label {
@@ -88,23 +54,17 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 5px; color: #e8ecf4; font-size: 0.78rem;
-      outline: none; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      outline: none;
     }
     input[type="text"]::placeholder, input[type="password"]::placeholder,
     input[type="email"]::placeholder { color: rgba(200,215,240,0.3); }
     input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus {
       border-color: rgba(0,200,255,0.6); background: rgba(255,255,255,0.08);
-      box-shadow: 0 0 0 3px rgba(0,200,255,0.15), 0 0 16px rgba(0,200,255,0.25);
-      animation: inputBeat 2s ease-in-out infinite;
-    }
-    @keyframes inputBeat {
-      0%,100% { box-shadow: 0 0 0 3px rgba(0,200,255,0.15), 0 0 16px rgba(0,200,255,0.25); }
-      50% { box-shadow: 0 0 0 5px rgba(0,200,255,0.20), 0 0 28px rgba(138,43,226,0.35); }
     }
     .links { display: flex; justify-content: center; gap: 16px; margin: 14px 0 8px; font-size: 0.78rem; }
     .links a {
       color: rgba(120,200,255,0.85); text-decoration: none;
-      transition: color 0.2s; border-bottom: 1px solid transparent;
+      border-bottom: 1px solid transparent;
     }
     .links a:hover { color: #00d4ff; border-bottom-color: rgba(0,212,255,0.5); }
     .btn-icon {
@@ -114,17 +74,8 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
       border: none; border-radius: 5px; color: #fff;
       font-size: 0.80rem; font-weight: 600; cursor: pointer;
       letter-spacing: 0.02em;
-      transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
       box-shadow: 0 3px 14px rgba(0,150,255,0.3);
-      position: relative; overflow: hidden;
     }
-    .btn-icon::after {
-      content: ''; position: absolute; top: 0; left: -100%;
-      width: 60%; height: 100%;
-      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
-      transition: left 0.7s ease; pointer-events: none;
-    }
-    .btn-icon:hover::after { left: 120%; }
     .btn-icon:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(0,180,255,0.5); }
     .btn-icon:active { transform: translateY(0); opacity: 0.9; }
     .btn-icon:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
@@ -133,7 +84,6 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
       background: linear-gradient(135deg, #1a5fad, #2e7dd9);
       border: 1px solid rgba(100,160,255,0.3); border-radius: 5px;
       color: #d0e4ff; font-size: 0.76rem; font-weight: 600; cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s, border-color 0.2s;
       box-shadow: 0 2px 12px rgba(30,100,200,0.25);
     }
     .ghost-btn:hover {
@@ -146,21 +96,19 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
     .input-icon svg:not(.toggle-pw) {
       position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
       width: 15px; height: 15px;
-      color: rgba(0,200,255,0.6); pointer-events: none; transition: color 0.2s;
+      color: rgba(0,200,255,0.6); pointer-events: none;
     }
     .input-icon input { padding-left: 32px; padding-right: 32px; }
     .toggle-pw {
       position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
       width: 15px; height: 15px; pointer-events: auto; cursor: pointer;
-      color: rgba(0,200,255,0.6); transition: color 0.2s;
+      color: rgba(0,200,255,0.6);
     }
     .toggle-pw:hover {
       color: rgba(0,220,255,1);
-      filter: drop-shadow(0 0 6px rgba(0,200,255,0.5));
     }
     .input-icon:focus-within svg {
       color: rgba(0,220,255,1);
-      filter: drop-shadow(0 0 6px rgba(0,200,255,0.5));
     }
     .title-icon {
       display: inline-flex; align-items: center;
@@ -169,7 +117,6 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
     .title-icon svg {
       width: 20px; height: 20px;
       filter: drop-shadow(0 0 8px rgba(0,200,255,0.6));
-      animation: logoPulse 3s ease-in-out infinite;
     }
     .divider { height: 1px; background: rgba(255,255,255,0.06); margin: 10px 0; }
   </style>
