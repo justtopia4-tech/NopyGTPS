@@ -1,8 +1,12 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
-import path from 'path';
+import path, { join, dirname } from 'path';
 import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 const PORT = 3000;
@@ -26,7 +30,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // @note static files from public folder
-app.use(express.static(path.join(process.cwd(), 'public')));
+app.use(express.static(join(__dirname, 'public')));
 
 // @note request logging middleware
 app.use((req: Request, _res: Response, next: NextFunction) => {
@@ -59,7 +63,7 @@ app.all('/player/login/dashboard', async (req: Request, res: Response) => {
 
   const encodedClientData = Buffer.from(clientData).toString('base64');
 
-  const templatePath = path.join(process.cwd(), 'template', 'dashboard.html');
+  const templatePath = join(__dirname, 'template', 'dashboard.html');
   const templateContent = fs.readFileSync(templatePath, 'utf-8');
   const htmlContent = templateContent.replace('{{ data }}', encodedClientData);
 

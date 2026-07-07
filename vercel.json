@@ -11,5 +11,10 @@
       "src": "/(.*)",
       "dest": "/index.ts"
     }
-  ]
+  ],
+  "functions": {
+    "./index.ts": {
+      "includeFiles": "template/**,public/**"
+    }
+  }
 }
