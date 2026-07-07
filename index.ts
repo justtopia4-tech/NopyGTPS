@@ -20,8 +20,8 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
       overflow: hidden; position: relative;
     }
     .login-card {
-      position: relative; z-index: 1; width: 260px; max-width: 85vw;
-      padding: 12px 10px; border-radius: 16px;
+      position: relative; z-index: 1; width: 290px; max-width: 85vw;
+      padding: 14px 12px; border-radius: 16px;
       background: rgba(20, 25, 50, 0.65);
       backdrop-filter: blur(24px) saturate(1.4);
       -webkit-backdrop-filter: blur(24px) saturate(1.4);
@@ -56,7 +56,7 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
     }
     .logo-area { text-align: center; margin-bottom: 4px; position: relative; }
     .logo-area img {
-      width: 64px; height: 64px; object-fit: contain;
+      width: 72px; height: 72px; object-fit: contain;
       filter: drop-shadow(0 0 12px rgba(0,180,255,0.6));
       animation: logoPulse 3s ease-in-out infinite;
     }
@@ -65,7 +65,7 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
       50% { filter: drop-shadow(0 0 24px rgba(0,220,255,0.9)); transform: scale(1.05); }
     }
     h2 {
-      text-align: center; font-size: 0.88rem; font-weight: 600; margin-bottom: 10px;
+      text-align: center; font-size: 0.95rem; font-weight: 600; margin-bottom: 12px;
       letter-spacing: -0.02em;
       background: linear-gradient(90deg, #ffffff, #a0d8ff, #ffffff, #c3a6ff, #ffffff);
       background-size: 200% auto;
@@ -77,17 +77,17 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
       0% { background-position: 0% center; }
       100% { background-position: 200% center; }
     }
-    .form-group { margin-bottom: 6px; }
+    .form-group { margin-bottom: 8px; }
     label {
-      display: block; font-size: 0.62rem; font-weight: 500;
+      display: block; font-size: 0.68rem; font-weight: 500;
       color: rgba(200,215,240,0.7); margin-bottom: 2px;
       letter-spacing: 0.05em; text-transform: uppercase;
     }
     input[type="text"], input[type="password"], input[type="email"] {
-      width: 100%; padding: 5px 8px;
+      width: 100%; padding: 6px 9px;
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 5px; color: #e8ecf4; font-size: 0.72rem;
+      border-radius: 5px; color: #e8ecf4; font-size: 0.78rem;
       outline: none; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
     }
     input[type="text"]::placeholder, input[type="password"]::placeholder,
@@ -101,7 +101,7 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
       0%,100% { box-shadow: 0 0 0 3px rgba(0,200,255,0.15), 0 0 16px rgba(0,200,255,0.25); }
       50% { box-shadow: 0 0 0 5px rgba(0,200,255,0.20), 0 0 28px rgba(138,43,226,0.35); }
     }
-    .links { display: flex; justify-content: center; gap: 14px; margin: 12px 0 6px; font-size: 0.72rem; }
+    .links { display: flex; justify-content: center; gap: 16px; margin: 14px 0 8px; font-size: 0.78rem; }
     .links a {
       color: rgba(120,200,255,0.85); text-decoration: none;
       transition: color 0.2s; border-bottom: 1px solid transparent;
@@ -109,10 +109,10 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
     .links a:hover { color: #00d4ff; border-bottom-color: rgba(0,212,255,0.5); }
     .btn-icon {
       display: flex; align-items: center; justify-content: center; gap: 5px;
-      width: 100%; padding: 6px 10px; margin-top: 5px;
+      width: 100%; padding: 7px 11px; margin-top: 6px;
       background: linear-gradient(135deg, #0088cc, #00bbff);
       border: none; border-radius: 5px; color: #fff;
-      font-size: 0.74rem; font-weight: 600; cursor: pointer;
+      font-size: 0.80rem; font-weight: 600; cursor: pointer;
       letter-spacing: 0.02em;
       transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
       box-shadow: 0 3px 14px rgba(0,150,255,0.3);
@@ -129,10 +129,10 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
     .btn-icon:active { transform: translateY(0); opacity: 0.9; }
     .btn-icon:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
     .ghost-btn {
-      width: 100%; padding: 5px 10px; margin-top: 5px;
+      width: 100%; padding: 6px 11px; margin-top: 6px;
       background: linear-gradient(135deg, #1a5fad, #2e7dd9);
       border: 1px solid rgba(100,160,255,0.3); border-radius: 5px;
-      color: #d0e4ff; font-size: 0.70rem; font-weight: 600; cursor: pointer;
+      color: #d0e4ff; font-size: 0.76rem; font-weight: 600; cursor: pointer;
       transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s, border-color 0.2s;
       box-shadow: 0 2px 12px rgba(30,100,200,0.25);
     }
@@ -144,14 +144,14 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
     .hidden { display: none !important; }
     .input-icon { position: relative; }
     .input-icon svg:not(.toggle-pw) {
-      position: absolute; left: 8px; top: 50%; transform: translateY(-50%);
-      width: 13px; height: 13px;
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      width: 15px; height: 15px;
       color: rgba(0,200,255,0.6); pointer-events: none; transition: color 0.2s;
     }
-    .input-icon input { padding-left: 28px; padding-right: 28px; }
+    .input-icon input { padding-left: 32px; padding-right: 32px; }
     .toggle-pw {
-      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-      width: 13px; height: 13px; pointer-events: auto; cursor: pointer;
+      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+      width: 15px; height: 15px; pointer-events: auto; cursor: pointer;
       color: rgba(0,200,255,0.6); transition: color 0.2s;
     }
     .toggle-pw:hover {
@@ -167,7 +167,7 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
       justify-content: center; gap: 8px;
     }
     .title-icon svg {
-      width: 18px; height: 18px;
+      width: 20px; height: 20px;
       filter: drop-shadow(0 0 8px rgba(0,200,255,0.6));
       animation: logoPulse 3s ease-in-out infinite;
     }
@@ -201,11 +201,11 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
           </div>
         </div>
         <button type="submit" class="btn-icon">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
           Log in
         </button>
         <button type="button" id="toggleRegister" class="btn-icon ghost-btn">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
           Register Account
         </button>
       </form>
@@ -248,11 +248,11 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
           </div>
         </div>
         <button type="submit" class="btn-icon">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
           Register
         </button>
         <button type="button" id="toggleLogin" class="btn-icon ghost-btn">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
           Back to Login
         </button>
       </form>
