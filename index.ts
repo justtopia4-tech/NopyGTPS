@@ -486,22 +486,7 @@ app.all(
   },
 );
 
-/**
- * @note first checktoken endpoint - redirects to validate endpoint
- */
-app.all('/player/growid/checktoken', async (_req: Request, res: Response) => {
-  return res.redirect(307, '/player/growid/validate/checktoken');
-});
-
-/**
- * @note second checktoken endpoint - validates token and returns updated token
- *
- * FIX: Saat rebuild token setelah refresh, growId & password tetap
- * preserve URL-encoding-nya agar tidak corrupt.
- */
-app.all(
-  '/player/growid/validate/checktoken',
-  async (req: Request, res: Response) => {
+const handleCheckToken = async (req: Request, res: Response) => {
     try {
       let refreshToken: string | undefined;
       let clientData: string | undefined;
@@ -610,12 +595,17 @@ app.all(
         }),
       );
     }
-  },
-);
+  }
+};
+
+app.all('/player/growid/checktoken', handleCheckToken);
+app.all('/player/growid/validate/checktoken', handleCheckToken);
 
 app.use((req: Request, res: Response) => {
   console.log(`[404] ${req.method} ${req.path} | headers: ${JSON.stringify(req.headers)}`);
-  res.status(404).json({ status: 'error', message: `Not found: ${req.method} ${req.path}` });
+  res.status(200).type('text/plain').send(
+    JSON.stringify({ status: 'error', message: `Not found: ${req.method} ${req.path}` }),
+  );
 });
 
 if (!process.env.VERCEL) {
