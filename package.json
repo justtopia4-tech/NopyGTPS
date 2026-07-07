@@ -4,11 +4,7 @@
   "version": "1.0.50",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch index.ts",
-    "build": "echo 'Build complete'"
-  },
-  "engines": {
-    "node": ">=18"
+    "dev": "bun run --watch index.ts"
   },
   "dependencies": {
     "cors": "^2.8.5",
