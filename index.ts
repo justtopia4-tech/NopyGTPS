@@ -465,12 +465,10 @@ app.all(
 
       console.log(`[LOGIN] GrowID: ${growId} | Token built successfully`);
 
-      res.status(200).type('text/plain').send(
-        `status=success&token=${encodeURIComponent(token)}&url=&accountType=growtopia`,
-      );
+      res.status(200).type('text/plain').send(token);
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
-      res.status(200).type('text/plain').send('status=error&message=Internal Server Error');
+      res.status(401).type('text/plain').send('Account not found or invalid credentials.');
     }
   },
 );
@@ -563,11 +561,11 @@ const handleCheckToken = async (req: Request, res: Response) => {
       ).toString('base64');
 
       res.status(200).type('text/plain').send(
-        `status=success&token=${encodeURIComponent(token)}&url=&accountType=growtopia&accountAge=2`,
+        token,
       );
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
-      res.status(200).type('text/plain').send('status=error&message=Internal Server Error');
+      res.status(401).type('text/plain').send('Invalid refresh token.');
     }
   }
 };
