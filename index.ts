@@ -394,6 +394,7 @@ app.all(
 
       // @note FIX: encode growId dan password agar karakter spesial
       // tidak merusak query string saat di-decode di game server
+      const encodedToken = encodeURIComponent(_token);
       const encodedGrowId = encodeURIComponent(growId);
       const encodedPassword = encodeURIComponent(password);
       const encodedEmail = encodeURIComponent(email);
@@ -402,11 +403,11 @@ app.all(
 
       if (email) {
         token = Buffer.from(
-          `_token=${_token}&growId=${encodedGrowId}&password=${encodedPassword}&email=${encodedEmail}&reg=1`,
+          `_token=${encodedToken}&growId=${encodedGrowId}&password=${encodedPassword}&email=${encodedEmail}&reg=1`,
         ).toString('base64');
       } else {
         token = Buffer.from(
-          `_token=${_token}&growId=${encodedGrowId}&password=${encodedPassword}&reg=0`,
+          `_token=${encodedToken}&growId=${encodedGrowId}&password=${encodedPassword}&reg=0`,
         ).toString('base64');
       }
 
@@ -513,7 +514,7 @@ const handleCheckToken = async (req: Request, res: Response) => {
       const token = Buffer.from(
         decodedRefreshToken.replace(
           /(_token=)[^&]*/,
-          `$1${Buffer.from(clientData).toString('base64')}`,
+          `$1${encodeURIComponent(Buffer.from(clientData).toString('base64'))}`,
         ),
       ).toString('base64');
 
