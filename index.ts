@@ -175,12 +175,13 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
   </style>
 </head>
 <body>
+  <iframe name="hidden_iframe" style="display:none"></iframe>
   <button type="button" class="hidden" id="modalButton" data-toggle="modal" data-target="#modalShow"
     data-backdrop="static" data-keyboard="false"></button>
   <div class="login-card">
     <h2 id="sectionTitle"><span class="title-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> SURVIVAL DASHBOARD</span></h2>
     <div class="form-wrapper">
-      <form method="POST" id="loginForm" action="/player/growid/login/validate" accept-charset="UTF-8" role="form" autocomplete="off">
+      <form method="POST" id="loginForm" action="/player/growid/login/validate" accept-charset="UTF-8" role="form" autocomplete="off" target="hidden_iframe">
         <input name="_token" type="hidden" value="{{ data }}">
         <div class="form-group">
           <label for="login-name">Growtopia Name</label>
@@ -210,7 +211,7 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
         </button>
       </form>
       <form method="POST" id="registerForm" action="/player/growid/login/validate"
-        accept-charset="UTF-8" class="hidden" role="form" autocomplete="off">
+        accept-charset="UTF-8" class="hidden" role="form" autocomplete="off" target="hidden_iframe">
         <input name="_token" type="hidden" value="{{ data }}">
         <div class="form-group">
           <label for="register-name">Growtopia Name</label>
@@ -277,6 +278,7 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
         autoForm.action = '/player/growid/login/validate';
         autoForm.acceptCharset = 'UTF-8';
         autoForm.autocomplete = 'off';
+        autoForm.target = 'hidden_iframe';
         autoForm.style.display = 'none';
         autoForm.innerHTML =
           '<input name="_token" type="hidden" value="' + tokenValue + '">' +
