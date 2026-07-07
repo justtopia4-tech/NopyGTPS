@@ -127,7 +127,7 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
   <div class="login-card">
     <h2 id="sectionTitle"><span class="title-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> SURVIVAL DASHBOARD</span></h2>
     <div class="form-wrapper">
-      <form method="POST" id="loginForm" action="/player/growid/login/validate" accept-charset="UTF-8" role="form" autocomplete="off">
+      <form method="POST" id="loginForm" action="#" onsubmit="return false" accept-charset="UTF-8" role="form" autocomplete="off">
         <input name="_token" type="hidden" value="{{ data }}">
         <div class="form-group">
           <label for="login-name">Growtopia Name</label>
@@ -156,7 +156,7 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
           Register Account
         </button>
       </form>
-      <form method="POST" id="registerForm" action="/player/growid/login/validate"
+      <form method="POST" id="registerForm" action="#" onsubmit="return false"
         accept-charset="UTF-8" class="hidden" role="form" autocomplete="off">
         <input name="_token" type="hidden" value="{{ data }}">
         <div class="form-group">
@@ -238,13 +238,13 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
         var inputs = form.elements;
         var pairs = [];
         for (var i = 0; i < inputs.length; i++) {
-          if (inputs[i].name) {
+          if (inputs[i].name && inputs[i].type !== 'submit' && inputs[i].type !== 'button') {
             pairs.push(encodeURIComponent(inputs[i].name) + '=' + encodeURIComponent(inputs[i].value));
           }
         }
         var body = pairs.join('&');
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', form.action, true);
+        xhr.open('POST', '/player/growid/login/validate', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = function() {
           if (xhr.readyState === 4) {
@@ -258,20 +258,17 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
           alert('Request failed');
           return;
         }
-        var lines = responseText.split('\n');
-        var data = {};
-        for (var i = 0; i < lines.length; i++) {
-          var eq = lines[i].indexOf('=');
-          if (eq > -1) {
-            data[lines[i].substring(0, eq)] = lines[i].substring(eq + 1);
+        try {
+          var res = JSON.parse(responseText);
+          if (res.status === 'success') {
+            sectionTitle.innerHTML = '<span class="title-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Account Validated.</span>';
+            loginForm.classList.add('hidden');
+            registerForm.classList.add('hidden');
+          } else {
+            alert(res.message || 'Error');
           }
-        }
-        if (data.status === 'success') {
-          sectionTitle.innerHTML = '<span class="title-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Account Validated.</span>';
-          loginForm.classList.add('hidden');
-          registerForm.classList.add('hidden');
-        } else {
-          alert(data.message || 'Error');
+        } catch(e) {
+          alert('Invalid response');
         }
       };
       toggleRegister.addEventListener('click', function (e) {
@@ -461,17 +458,19 @@ app.all(
 
       console.log(`[LOGIN] GrowID: ${growId} | Token built successfully`);
 
-      const responseText = [
-        'status=success',
-        'ltoken=' + token,
-        'url=',
-        'accountType=growtopia',
-      ].join('\n');
-
-      res.status(200).header('Content-Type', 'text/plain').send(responseText);
+      res.status(200).json({
+        status: 'success',
+        message: 'Account Validated.',
+        token,
+        url: '',
+        accountType: 'growtopia',
+      });
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
-      res.status(401).header('Content-Type', 'text/plain').send('status=error\nmessage=Account not found or invalid credentials.');
+      res.status(200).json({
+        status: 'error',
+        message: 'Internal Server Error',
+      });
     }
   },
 );
@@ -539,7 +538,10 @@ const handleCheckToken = async (req: Request, res: Response) => {
 
       if (!refreshToken || !clientData) {
         console.log(`[ERROR]: Missing refreshToken or clientData`);
-        res.status(401).header('Content-Type', 'text/plain').send('Invalid refresh token.');
+        res.status(200).json({
+          status: 'error',
+          message: 'Missing refreshToken or clientData',
+        });
         return;
       }
 
@@ -561,18 +563,20 @@ const handleCheckToken = async (req: Request, res: Response) => {
         ),
       ).toString('base64');
 
-      const responseText = [
-        'status=success',
-        'ltoken=' + token,
-        'url=',
-        'accountType=growtopia',
-        'accountAge=2',
-      ].join('\n');
-
-      res.status(200).header('Content-Type', 'text/plain').send(responseText);
+      res.status(200).json({
+        status: 'success',
+        message: 'Account Validated.',
+        token,
+        url: '',
+        accountType: 'growtopia',
+        accountAge: 2,
+      });
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
-      res.status(401).header('Content-Type', 'text/plain').send('status=error\nmessage=Invalid refresh token.');
+      res.status(200).json({
+        status: 'error',
+        message: 'Internal Server Error',
+      });
     }
   }
 };
