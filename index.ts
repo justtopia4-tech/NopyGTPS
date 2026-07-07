@@ -2,9 +2,15 @@ import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
+import fs from 'fs';
 
 const app = express();
 const PORT = 3000;
+
+const DASHBOARD_HTML = fs.readFileSync(
+  path.join(process.cwd(), 'template', 'dashboard.html'),
+  'utf-8',
+);
 
 // @note trust proxy - set to number of proxies in front of app
 app.set('trust proxy', 1);
@@ -45,11 +51,17 @@ app.get('/', (_req: Request, res: Response) => {
   res.send('Hello, world!');
 });
 
-/**
- * @note dashboard endpoint - serves login HTML page with client data
- */
-app.all('/player/login/dashboard', (_req: Request, res: Response) => {
-  res.redirect(307, '/player/growid/login/validate');
+app.all('/player/login/dashboard', async (req: Request, res: Response) => {
+  const body = req.body;
+  let clientData = '';
+
+  if (body && typeof body === 'object' && Object.keys(body).length > 0) {
+    clientData = Object.keys(body)[0];
+  }
+
+  const encodedClientData = Buffer.from(clientData).toString('base64');
+  res.setHeader('Content-Type', 'text/html');
+  res.send(DASHBOARD_HTML.split('{{ data }}').join(encodedClientData));
 });
 
 /**
@@ -72,6 +84,7 @@ app.all(
 
       // @note FIX: encode growId dan password agar karakter spesial
       // tidak merusak query string saat di-decode di game server
+      const encodedToken = encodeURIComponent(_token);
       const encodedGrowId = encodeURIComponent(growId);
       const encodedPassword = encodeURIComponent(password);
       const encodedEmail = encodeURIComponent(email);
@@ -80,11 +93,11 @@ app.all(
 
       if (email) {
         token = Buffer.from(
-          `_token=${_token}&growId=${encodedGrowId}&password=${encodedPassword}&email=${encodedEmail}&reg=1`,
+          `_token=${encodedToken}&growId=${encodedGrowId}&password=${encodedPassword}&email=${encodedEmail}&reg=1`,
         ).toString('base64');
       } else {
         token = Buffer.from(
-          `_token=${_token}&growId=${encodedGrowId}&password=${encodedPassword}&reg=0`,
+          `_token=${encodedToken}&growId=${encodedGrowId}&password=${encodedPassword}&reg=0`,
         ).toString('base64');
       }
 
