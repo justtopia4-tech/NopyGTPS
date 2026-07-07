@@ -466,22 +466,11 @@ app.all(
       console.log(`[LOGIN] GrowID: ${growId} | Token built successfully`);
 
       res.status(200).type('text/plain').send(
-        JSON.stringify({
-          status: 'success',
-          message: 'Account Validated.',
-          token,
-          url: '',
-          accountType: 'growtopia',
-        }),
+        `status=success&token=${token}&url=&accountType=growtopia`,
       );
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
-      res.status(200).type('text/plain').send(
-        JSON.stringify({
-          status: 'error',
-          message: 'Internal Server Error',
-        }),
-      );
+      res.status(200).type('text/plain').send('status=error&message=Internal Server Error');
     }
   },
 );
@@ -550,10 +539,7 @@ const handleCheckToken = async (req: Request, res: Response) => {
       if (!refreshToken || !clientData) {
         console.log(`[ERROR]: Missing refreshToken or clientData`);
         res.status(200).type('text/plain').send(
-          JSON.stringify({
-            status: 'error',
-            message: 'Missing refreshToken or clientData',
-          }),
+          'status=error&message=Missing refreshToken or clientData',
         );
         return;
       }
@@ -577,23 +563,11 @@ const handleCheckToken = async (req: Request, res: Response) => {
       ).toString('base64');
 
       res.status(200).type('text/plain').send(
-        JSON.stringify({
-          status: 'success',
-          message: 'Account Validated.',
-          token,
-          url: '',
-          accountType: 'growtopia',
-          accountAge: 2,
-        }),
+        `status=success&token=${token}&url=&accountType=growtopia&accountAge=2`,
       );
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
-      res.status(200).type('text/plain').send(
-        JSON.stringify({
-          status: 'error',
-          message: 'Internal Server Error',
-        }),
-      );
+      res.status(200).type('text/plain').send('status=error&message=Internal Server Error');
     }
   }
 };
@@ -603,9 +577,9 @@ app.all('/player/growid/validate/checktoken', handleCheckToken);
 
 app.use((req: Request, res: Response) => {
   console.log(`[404] ${req.method} ${req.path} | headers: ${JSON.stringify(req.headers)}`);
-  res.status(200).type('text/plain').send(
-    JSON.stringify({ status: 'error', message: `Not found: ${req.method} ${req.path}` }),
-  );
+    res.status(200).type('text/plain').send(
+      `status=error&message=Not found: ${req.method} ${req.path}`,
+    );
 });
 
 if (!process.env.VERCEL) {
