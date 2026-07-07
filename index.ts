@@ -376,6 +376,7 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 
 // @note root endpoint
 app.get('/', (_req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'text/plain');
   res.send('Hello, world!');
 });
 
