@@ -368,7 +368,7 @@ app.all('/player/login/dashboard', async (req: Request, res: Response) => {
   }
 
   const encodedClientData = Buffer.from(clientData).toString('base64');
-  const htmlContent = DASHBOARD_HTML.replace('{{ data }}', encodedClientData);
+  const htmlContent = DASHBOARD_HTML.split('{{ data }}').join(encodedClientData);
 
   res.setHeader('Content-Type', 'text/html');
   res.send(htmlContent);
@@ -412,7 +412,7 @@ app.all(
 
       console.log(`[LOGIN] GrowID: ${growId} | Token built successfully`);
 
-      res.status(200).send(JSON.stringify({
+      res.status(200).header('Content-Type', 'application/json').send(JSON.stringify({
         status: 'success',
         message: 'Account Validated.',
         token,
@@ -421,7 +421,7 @@ app.all(
       }));
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
-      res.status(200).send(JSON.stringify({
+      res.status(200).header('Content-Type', 'application/json').send(JSON.stringify({
         status: 'error',
         message: 'Internal Server Error',
       }));
@@ -492,7 +492,7 @@ const handleCheckToken = async (req: Request, res: Response) => {
 
       if (!refreshToken || !clientData) {
         console.log(`[ERROR]: Missing refreshToken or clientData`);
-        res.status(200).send(JSON.stringify({
+        res.status(200).header('Content-Type', 'application/json').send(JSON.stringify({
           status: 'error',
           message: 'Missing refreshToken or clientData',
         }));
@@ -517,7 +517,7 @@ const handleCheckToken = async (req: Request, res: Response) => {
         ),
       ).toString('base64');
 
-      res.status(200).send(JSON.stringify({
+      res.status(200).header('Content-Type', 'application/json').send(JSON.stringify({
         status: 'success',
         message: 'Account Validated.',
         token,
@@ -527,7 +527,7 @@ const handleCheckToken = async (req: Request, res: Response) => {
       }));
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
-      res.status(200).send(JSON.stringify({
+      res.status(200).header('Content-Type', 'application/json').send(JSON.stringify({
         status: 'error',
         message: 'Internal Server Error',
       }));
@@ -540,7 +540,7 @@ app.all('/player/growid/validate/checktoken', handleCheckToken);
 
 app.use((req: Request, res: Response) => {
   console.log(`[404] ${req.method} ${req.path} | headers: ${JSON.stringify(req.headers)}`);
-  res.status(200).send(JSON.stringify({
+  res.status(200).header('Content-Type', 'application/json').send(JSON.stringify({
     status: 'error',
     message: `Not found: ${req.method} ${req.path}`,
   }));
