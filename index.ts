@@ -1,12 +1,36 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
-import path, { join, dirname } from 'path';
+import { join, dirname, resolve } from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+let __dirname: string;
+try {
+  __dirname = dirname(fileURLToPath(import.meta.url));
+} catch {
+  __dirname = process.cwd();
+}
+
+function findTemplate(): string {
+  const candidates = [
+    join(__dirname, 'template', 'dashboard.html'),
+    join(process.cwd(), 'template', 'dashboard.html'),
+    resolve(__dirname, '..', 'template', 'dashboard.html'),
+  ];
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return p;
+  }
+  throw new Error(
+    `dashboard.html not found. __dirname=${__dirname}, cwd=${process.cwd()}, tried: ${candidates.join(', ')}`,
+  );
+}
+
+let __cachedTemplate: string;
+function getTemplate(): string {
+  if (!__cachedTemplate) __cachedTemplate = findTemplate();
+  return __cachedTemplate;
+}
 
 const app = express();
 const PORT = 3000;
@@ -30,7 +54,11 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // @note static files from public folder
-app.use(express.static(join(__dirname, 'public')));
+app.use(express.static(
+  fs.existsSync(join(__dirname, 'public'))
+    ? join(__dirname, 'public')
+    : join(process.cwd(), 'public')
+));
 
 // @note request logging middleware
 app.use((req: Request, _res: Response, next: NextFunction) => {
@@ -63,7 +91,7 @@ app.all('/player/login/dashboard', async (req: Request, res: Response) => {
 
   const encodedClientData = Buffer.from(clientData).toString('base64');
 
-  const templatePath = join(__dirname, 'template', 'dashboard.html');
+  const templatePath = getTemplate();
   const templateContent = fs.readFileSync(templatePath, 'utf-8');
   const htmlContent = templateContent.replace('{{ data }}', encodedClientData);
 
@@ -250,6 +278,11 @@ app.all(
     }
   },
 );
+
+app.use((req: Request, res: Response) => {
+  console.log(`[404] ${req.method} ${req.path} | headers: ${JSON.stringify(req.headers)}`);
+  res.status(404).json({ status: 'error', message: `Not found: ${req.method} ${req.path}` });
+});
 
 if (!process.env.VERCEL) {
   app.listen(PORT, () => {
