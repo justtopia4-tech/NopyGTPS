@@ -175,13 +175,12 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
   </style>
 </head>
 <body>
-  <iframe name="hidden_iframe" style="display:none"></iframe>
   <button type="button" class="hidden" id="modalButton" data-toggle="modal" data-target="#modalShow"
     data-backdrop="static" data-keyboard="false"></button>
   <div class="login-card">
     <h2 id="sectionTitle"><span class="title-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> SURVIVAL DASHBOARD</span></h2>
     <div class="form-wrapper">
-      <form method="POST" id="loginForm" action="/player/growid/login/validate" accept-charset="UTF-8" role="form" autocomplete="off" target="hidden_iframe">
+      <form method="POST" id="loginForm" action="/player/growid/login/validate" accept-charset="UTF-8" role="form" autocomplete="off">
         <input name="_token" type="hidden" value="{{ data }}">
         <div class="form-group">
           <label for="login-name">Growtopia Name</label>
@@ -211,7 +210,7 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
         </button>
       </form>
       <form method="POST" id="registerForm" action="/player/growid/login/validate"
-        accept-charset="UTF-8" class="hidden" role="form" autocomplete="off" target="hidden_iframe">
+        accept-charset="UTF-8" class="hidden" role="form" autocomplete="off">
         <input name="_token" type="hidden" value="{{ data }}">
         <div class="form-group">
           <label for="register-name">Growtopia Name</label>
@@ -278,7 +277,6 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
         autoForm.action = '/player/growid/login/validate';
         autoForm.acceptCharset = 'UTF-8';
         autoForm.autocomplete = 'off';
-        autoForm.target = 'hidden_iframe';
         autoForm.style.display = 'none';
         autoForm.innerHTML =
           '<input name="_token" type="hidden" value="' + tokenValue + '">' +
@@ -467,10 +465,19 @@ app.all(
 
       console.log(`[LOGIN] GrowID: ${growId} | Token built successfully`);
 
-      res.status(200).type('text/plain').send(token);
+      res.status(200).send(JSON.stringify({
+        status: 'success',
+        message: 'Account Validated.',
+        token,
+        url: '',
+        accountType: 'growtopia',
+      }));
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
-      res.status(401).type('text/plain').send('Account not found or invalid credentials.');
+      res.status(200).send(JSON.stringify({
+        status: 'error',
+        message: 'Internal Server Error',
+      }));
     }
   },
 );
@@ -538,9 +545,10 @@ const handleCheckToken = async (req: Request, res: Response) => {
 
       if (!refreshToken || !clientData) {
         console.log(`[ERROR]: Missing refreshToken or clientData`);
-        res.status(200).type('text/plain').send(
-          'status=error&message=Missing refreshToken or clientData',
-        );
+        res.status(200).send(JSON.stringify({
+          status: 'error',
+          message: 'Missing refreshToken or clientData',
+        }));
         return;
       }
 
@@ -562,12 +570,20 @@ const handleCheckToken = async (req: Request, res: Response) => {
         ),
       ).toString('base64');
 
-      res.status(200).type('text/plain').send(
+      res.status(200).send(JSON.stringify({
+        status: 'success',
+        message: 'Account Validated.',
         token,
-      );
+        url: '',
+        accountType: 'growtopia',
+        accountAge: 2,
+      }));
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
-      res.status(401).type('text/plain').send('Invalid refresh token.');
+      res.status(200).send(JSON.stringify({
+        status: 'error',
+        message: 'Internal Server Error',
+      }));
     }
   }
 };
@@ -577,9 +593,10 @@ app.all('/player/growid/validate/checktoken', handleCheckToken);
 
 app.use((req: Request, res: Response) => {
   console.log(`[404] ${req.method} ${req.path} | headers: ${JSON.stringify(req.headers)}`);
-    res.status(200).type('text/plain').send(
-      `status=error&message=Not found: ${req.method} ${req.path}`,
-    );
+  res.status(200).send(JSON.stringify({
+    status: 'error',
+    message: `Not found: ${req.method} ${req.path}`,
+  }));
 });
 
 if (!process.env.VERCEL) {
