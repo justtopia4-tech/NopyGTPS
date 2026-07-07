@@ -43,7 +43,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-// @note rate limiter - 50 requests per minute
+// @note rate limiter - 50 requests per minute (skip on Vercel - edge proxy makes all IPs identical)
 const limiter = rateLimit({
   windowMs: 60_000,
   max: 50,
@@ -51,7 +51,7 @@ const limiter = rateLimit({
   legacyHeaders: false,
   validate: { trustProxy: false, xForwardedForHeader: false },
 });
-app.use(limiter);
+if (!process.env.VERCEL) app.use(limiter);
 
 // @note static files from public folder
 app.use(express.static(
@@ -137,7 +137,7 @@ app.all(
 
       console.log(`[LOGIN] GrowID: ${growId} | Token built successfully`);
 
-      res.send(
+      res.status(200).type('text/plain').send(
         JSON.stringify({
           status: 'success',
           message: 'Account Validated.',
@@ -148,10 +148,12 @@ app.all(
       );
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
-      res.status(500).json({
-        status: 'error',
-        message: 'Internal Server Error',
-      });
+      res.status(200).type('text/plain').send(
+        JSON.stringify({
+          status: 'error',
+          message: 'Internal Server Error',
+        }),
+      );
     }
   },
 );
@@ -234,10 +236,12 @@ app.all(
 
       if (!refreshToken || !clientData) {
         console.log(`[ERROR]: Missing refreshToken or clientData`);
-        res.status(200).json({
-          status: 'error',
-          message: 'Missing refreshToken or clientData',
-        });
+        res.status(200).type('text/plain').send(
+          JSON.stringify({
+            status: 'error',
+            message: 'Missing refreshToken or clientData',
+          }),
+        );
         return;
       }
 
@@ -259,7 +263,7 @@ app.all(
         ),
       ).toString('base64');
 
-      res.send(
+      res.status(200).type('text/plain').send(
         JSON.stringify({
           status: 'success',
           message: 'Account Validated.',
@@ -271,10 +275,12 @@ app.all(
       );
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
-      res.status(200).json({
-        status: 'error',
-        message: 'Internal Server Error',
-      });
+      res.status(200).type('text/plain').send(
+        JSON.stringify({
+          status: 'error',
+          message: 'Internal Server Error',
+        }),
+      );
     }
   },
 );

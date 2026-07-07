@@ -9,12 +9,12 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/"
+      "dest": "/index.ts"
     }
   ],
   "functions": {
     "index.ts": {
-      "includeFiles": "template/**/*,public/**/*"
+      "includeFiles": "template/**,public/**"
     }
   }
 }
