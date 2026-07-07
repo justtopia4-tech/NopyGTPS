@@ -253,17 +253,25 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
         };
         xhr.send(body);
       };
-      var handleResponse = function(err, tokenText, statusCode) {
+      var handleResponse = function(err, responseText, statusCode) {
         if (err) {
           alert('Request failed');
           return;
         }
-        if (statusCode === 200 && tokenText) {
+        var lines = responseText.split('\n');
+        var data = {};
+        for (var i = 0; i < lines.length; i++) {
+          var eq = lines[i].indexOf('=');
+          if (eq > -1) {
+            data[lines[i].substring(0, eq)] = lines[i].substring(eq + 1);
+          }
+        }
+        if (data.status === 'success') {
           sectionTitle.innerHTML = '<span class="title-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Account Validated.</span>';
           loginForm.classList.add('hidden');
           registerForm.classList.add('hidden');
         } else {
-          alert(tokenText || 'Error');
+          alert(data.message || 'Error');
         }
       };
       toggleRegister.addEventListener('click', function (e) {
@@ -453,10 +461,17 @@ app.all(
 
       console.log(`[LOGIN] GrowID: ${growId} | Token built successfully`);
 
-      res.status(200).header('Content-Type', 'text/plain').send(token);
+      const responseText = [
+        'status=success',
+        'ltoken=' + token,
+        'url=',
+        'accountType=growtopia',
+      ].join('\n');
+
+      res.status(200).header('Content-Type', 'text/plain').send(responseText);
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
-      res.status(401).header('Content-Type', 'text/plain').send('Account not found or invalid credentials.');
+      res.status(401).header('Content-Type', 'text/plain').send('status=error\nmessage=Account not found or invalid credentials.');
     }
   },
 );
@@ -546,10 +561,18 @@ const handleCheckToken = async (req: Request, res: Response) => {
         ),
       ).toString('base64');
 
-      res.status(200).header('Content-Type', 'text/plain').send(token);
+      const responseText = [
+        'status=success',
+        'ltoken=' + token,
+        'url=',
+        'accountType=growtopia',
+        'accountAge=2',
+      ].join('\n');
+
+      res.status(200).header('Content-Type', 'text/plain').send(responseText);
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
-      res.status(401).header('Content-Type', 'text/plain').send('Invalid refresh token.');
+      res.status(401).header('Content-Type', 'text/plain').send('status=error\nmessage=Invalid refresh token.');
     }
   }
 };
