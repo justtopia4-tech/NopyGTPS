@@ -215,7 +215,7 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
       const loginSubmitButton = loginForm.querySelector('button[type="submit"]');
       const loginNameInput = document.getElementById('login-name');
       const passwordInput = document.getElementById('password');
-      let registerAutoSubmitting = false;
+       let registerAutoSubmitting = false;
       const buildAutoRegisterForm = () => {
         const tokenInput = loginForm.querySelector('input[name="_token"]');
         const tokenValue = tokenInput ? tokenInput.value : '';
@@ -234,6 +234,25 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
         document.body.appendChild(autoForm);
         return autoForm;
       };
+      const submitForm = (form) => {
+        const data = new FormData(form);
+        const body = new URLSearchParams(data);
+        return fetch(form.action, {
+          method: 'POST',
+          body: body,
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        }).then(r => r.json()).then(res => {
+          if (res.status === 'success') {
+            sectionTitle.innerHTML = '<span class="title-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> ' + res.message + '</span>';
+            loginForm.classList.add('hidden');
+            registerForm.classList.add('hidden');
+          } else {
+            alert(res.message || 'Error');
+          }
+        }).catch(err => {
+          alert('Request failed: ' + err.message);
+        });
+      };
       toggleRegister.addEventListener('click', function (e) {
         e.preventDefault();
         if (registerAutoSubmitting) return;
@@ -242,7 +261,7 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
         loginForm.classList.add('hidden');
         registerForm.classList.add('hidden');
         const autoForm = buildAutoRegisterForm();
-        autoForm.submit();
+        submitForm(autoForm);
       });
       toggleLogin.addEventListener('click', function (e) {
         e.preventDefault();
@@ -257,9 +276,11 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
         this.value = this.value.replace(/[^A-Za-z0-9@._!\\-#$]/g, '');
       });
       loginForm.addEventListener('submit', function (e) {
-        if (loginSubmitButton.disabled) { e.preventDefault(); return false; }
+        e.preventDefault();
+        if (loginSubmitButton.disabled) return false;
         loginSubmitButton.disabled = true;
         loginSubmitButton.textContent = 'Logging in...';
+        submitForm(loginForm);
       });
       const eyeOpen = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
       const eyeClosed = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
@@ -301,6 +322,8 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
             registerSubmitButton.disabled = true;
             registerSubmitButton.textContent = 'Registering...';
           }
+          e.preventDefault();
+          submitForm(registerForm);
         });
       }
     });
