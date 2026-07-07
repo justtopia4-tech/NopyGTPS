@@ -22,7 +22,7 @@
     }
 
     body {
-      background: linear-gradient(135deg, #0a0e27 0%, #1a1b3a 50%, #0f1923 100%);
+      background: transparent;
       min-height: 100vh;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       display: flex;
@@ -32,56 +32,15 @@
       position: relative;
     }
 
-    #stars {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-    }
 
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background:
-        radial-gradient(ellipse at 20% 50%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 20%, rgba(138, 43, 226, 0.18) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 80%, rgba(0, 255, 200, 0.12) 0%, transparent 50%);
-      pointer-events: none;
-      z-index: 0;
-      animation: ambientShift 14s ease-in-out infinite alternate;
-      mix-blend-mode: screen;
-    }
-
-    @keyframes ambientShift {
-      0%   { filter: hue-rotate(0deg)    brightness(1);    transform: scale(1);    }
-      50%  { filter: hue-rotate(40deg)   brightness(1.25); transform: scale(1.15); }
-      100% { filter: hue-rotate(-30deg)  brightness(1.1);  transform: scale(1.05); }
-    }
-
-    .orb {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(60px);
-      opacity: 0.55;
-      z-index: 0;
-      pointer-events: none;
-      mix-blend-mode: screen;
-    }
-    .orb-1 { width: 340px; height: 340px; background: #00bfff; top: -80px;  left: -80px;  animation: float1 12s ease-in-out infinite; }
-    .orb-2 { width: 280px; height: 280px; background: #a855f7; bottom: -60px; right: -60px; animation: float2 14s ease-in-out infinite; }
-    .orb-3 { width: 220px; height: 220px; background: #22d3ee; top: 40%;    right: 10%;   animation: float3 16s ease-in-out infinite; }
-
-    @keyframes float1 { 0%,100%{transform:translate(0,0) scale(1);}   50%{transform:translate(80px,60px) scale(1.25);} }
-    @keyframes float2 { 0%,100%{transform:translate(0,0) scale(1);}   50%{transform:translate(-70px,-50px) scale(1.2);} }
-    @keyframes float3 { 0%,100%{transform:translate(0,0) scale(0.9);} 50%{transform:translate(-60px,80px) scale(1.15);} }
 
     .login-card {
       position: relative;
       z-index: 1;
-      width: 420px;
-      max-width: 95vw;
-      padding: 40px 36px;
+      width: 380px;
+      max-width: 92vw;
+      padding: 32px 28px;
+
       background: rgba(20, 25, 50, 0.65);
       backdrop-filter: blur(24px) saturate(1.4);
       -webkit-backdrop-filter: blur(24px) saturate(1.4);
@@ -335,10 +294,6 @@
   </style>
 </head>
 <body>
-  <canvas id="stars"></canvas>
-  <span class="orb orb-1"></span>
-  <span class="orb orb-2"></span>
-  <span class="orb orb-3"></span>
   <button type="button" class="hidden" id="modalButton" data-toggle="modal" data-target="#modalShow"
     data-backdrop="static" data-keyboard="false"></button>
 
@@ -571,46 +526,6 @@
       if (e.ctrlKey && e.shiftKey && e.key === 'J') e.preventDefault();
       if (e.ctrlKey && e.key === 'U') e.preventDefault();
     });
-  </script>
-
-  <script>
-    (function () {
-      const c = document.getElementById('stars');
-      if (!c) return;
-      const ctx = c.getContext('2d');
-      let w, h, stars = [];
-      function resize() {
-        w = c.width = window.innerWidth;
-        h = c.height = window.innerHeight;
-        stars = Array.from({ length: 120 }, () => ({
-          x: Math.random() * w,
-          y: Math.random() * h,
-          r: Math.random() * 1.4 + 0.3,
-          s: Math.random() * 0.4 + 0.1,
-          a: Math.random() * Math.PI * 2,
-          tw: Math.random() * 0.02 + 0.005,
-          col: ['#ffffff', '#a0d8ff', '#c3a6ff', '#7fffd4'][Math.floor(Math.random() * 4)]
-        }));
-      }
-      function draw() {
-        ctx.clearRect(0, 0, w, h);
-        for (const s of stars) {
-          s.a += s.tw;
-          s.y += s.s;
-          if (s.y > h) { s.y = -2; s.x = Math.random() * w; }
-          const alpha = 0.4 + Math.abs(Math.sin(s.a)) * 0.6;
-          ctx.globalAlpha = alpha;
-          ctx.fillStyle = s.col;
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        requestAnimationFrame(draw);
-      }
-      resize();
-      draw();
-      window.addEventListener('resize', resize);
-    })();
   </script>
 </body>
 </html>
