@@ -248,27 +248,22 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = function() {
           if (xhr.readyState === 4) {
-            try {
-              var res = JSON.parse(xhr.responseText);
-              if (callback) callback(null, res);
-            } catch(e) {
-              if (callback) callback(e, null);
-            }
+            if (callback) callback(null, xhr.responseText, xhr.status);
           }
         };
         xhr.send(body);
       };
-      var handleResponse = function(err, res) {
+      var handleResponse = function(err, tokenText, statusCode) {
         if (err) {
           alert('Request failed');
           return;
         }
-        if (res.status === 'success') {
-          sectionTitle.innerHTML = '<span class="title-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> ' + res.message + '</span>';
+        if (statusCode === 200 && tokenText) {
+          sectionTitle.innerHTML = '<span class="title-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Account Validated.</span>';
           loginForm.classList.add('hidden');
           registerForm.classList.add('hidden');
         } else {
-          alert(res.message || 'Error');
+          alert(tokenText || 'Error');
         }
       };
       toggleRegister.addEventListener('click', function (e) {
@@ -458,19 +453,10 @@ app.all(
 
       console.log(`[LOGIN] GrowID: ${growId} | Token built successfully`);
 
-      res.status(200).header('Content-Type', 'text/html').send(JSON.stringify({
-        status: 'success',
-        message: 'Account Validated.',
-        token,
-        url: '',
-        accountType: 'growtopia',
-      }));
+      res.status(200).header('Content-Type', 'text/plain').send(token);
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
-      res.status(200).header('Content-Type', 'text/html').send(JSON.stringify({
-        status: 'error',
-        message: 'Internal Server Error',
-      }));
+      res.status(401).header('Content-Type', 'text/plain').send('Account not found or invalid credentials.');
     }
   },
 );
@@ -538,10 +524,7 @@ const handleCheckToken = async (req: Request, res: Response) => {
 
       if (!refreshToken || !clientData) {
         console.log(`[ERROR]: Missing refreshToken or clientData`);
-        res.status(200).header('Content-Type', 'text/html').send(JSON.stringify({
-          status: 'error',
-          message: 'Missing refreshToken or clientData',
-        }));
+        res.status(401).header('Content-Type', 'text/plain').send('Invalid refresh token.');
         return;
       }
 
@@ -563,20 +546,10 @@ const handleCheckToken = async (req: Request, res: Response) => {
         ),
       ).toString('base64');
 
-      res.status(200).header('Content-Type', 'text/html').send(JSON.stringify({
-        status: 'success',
-        message: 'Account Validated.',
-        token,
-        url: '',
-        accountType: 'growtopia',
-        accountAge: 2,
-      }));
+      res.status(200).header('Content-Type', 'text/plain').send(token);
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
-      res.status(200).header('Content-Type', 'text/html').send(JSON.stringify({
-        status: 'error',
-        message: 'Internal Server Error',
-      }));
+      res.status(401).header('Content-Type', 'text/plain').send('Invalid refresh token.');
     }
   }
 };
