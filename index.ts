@@ -207,19 +207,19 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
   </div>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      const loginForm = document.getElementById('loginForm');
-      const registerForm = document.getElementById('registerForm');
-      const toggleRegister = document.getElementById('toggleRegister');
-      const toggleLogin = document.getElementById('toggleLogin');
-      const sectionTitle = document.getElementById('sectionTitle');
-      const loginSubmitButton = loginForm.querySelector('button[type="submit"]');
-      const loginNameInput = document.getElementById('login-name');
-      const passwordInput = document.getElementById('password');
-       let registerAutoSubmitting = false;
-      const buildAutoRegisterForm = () => {
-        const tokenInput = loginForm.querySelector('input[name="_token"]');
-        const tokenValue = tokenInput ? tokenInput.value : '';
-        const autoForm = document.createElement('form');
+      var loginForm = document.getElementById('loginForm');
+      var registerForm = document.getElementById('registerForm');
+      var toggleRegister = document.getElementById('toggleRegister');
+      var toggleLogin = document.getElementById('toggleLogin');
+      var sectionTitle = document.getElementById('sectionTitle');
+      var loginSubmitButton = loginForm.querySelector('button[type="submit"]');
+      var loginNameInput = document.getElementById('login-name');
+      var passwordInput = document.getElementById('password');
+      var registerAutoSubmitting = false;
+      var buildAutoRegisterForm = function() {
+        var tokenInput = loginForm.querySelector('input[name="_token"]');
+        var tokenValue = tokenInput ? tokenInput.value : '';
+        var autoForm = document.createElement('form');
         autoForm.method = 'POST';
         autoForm.action = '/player/growid/login/validate';
         autoForm.acceptCharset = 'UTF-8';
@@ -235,13 +235,14 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
         return autoForm;
       };
       var submitForm = function(form, callback) {
-        var formData = new FormData(form);
+        var inputs = form.elements;
         var pairs = [];
-        formData.forEach(function(value, key) {
-          pairs.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
-        });
+        for (var i = 0; i < inputs.length; i++) {
+          if (inputs[i].name) {
+            pairs.push(encodeURIComponent(inputs[i].name) + '=' + encodeURIComponent(inputs[i].value));
+          }
+        }
         var body = pairs.join('&');
-        
         var xhr = new XMLHttpRequest();
         xhr.open('POST', form.action, true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -299,19 +300,22 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
         loginSubmitButton.textContent = 'Logging in...';
         submitForm(loginForm, handleResponse);
       });
-      const eyeOpen = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
-      const eyeClosed = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
-      document.querySelectorAll('.toggle-pw').forEach(function (btn) {
-        const input = btn.previousElementSibling;
-        btn.addEventListener('click', function () {
-          if (input.type === 'password') { input.type = 'text'; btn.innerHTML = eyeClosed; }
-          else { input.type = 'password'; btn.innerHTML = eyeOpen; }
-        });
-      });
-      const registerSubmitButton = registerForm.querySelector('button[type="submit"]');
-      const registerNameInput = document.getElementById('register-name');
-      const registerPasswordInput = document.getElementById('register-password');
-      const registerConfirmPasswordInput = document.getElementById('register-confirm-password');
+      var eyeOpen = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+      var eyeClosed = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+      var pwBtns = document.querySelectorAll('.toggle-pw');
+      for (var i = 0; i < pwBtns.length; i++) {
+        (function(btn) {
+          var input = btn.previousElementSibling;
+          btn.addEventListener('click', function () {
+            if (input.type === 'password') { input.type = 'text'; btn.innerHTML = eyeClosed; }
+            else { input.type = 'password'; btn.innerHTML = eyeOpen; }
+          });
+        })(pwBtns[i]);
+      }
+      var registerSubmitButton = registerForm.querySelector('button[type="submit"]');
+      var registerNameInput = document.getElementById('register-name');
+      var registerPasswordInput = document.getElementById('register-password');
+      var registerConfirmPasswordInput = document.getElementById('register-confirm-password');
       if (registerNameInput) {
         registerNameInput.addEventListener('input', function () {
           this.value = this.value.replace(/[^A-Za-z0-9]/g, '');
