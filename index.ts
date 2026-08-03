@@ -52,36 +52,46 @@ app.get('/', (_req: Request, res: Response) => {
  * @param req - express request with optional body data
  * @param res - express response
  */
-app.all('/player/login/dashboard', async (req: Request, res: Response) => {
-  const body = req.body;
-  let clientData = '';
+app.all(
+  [
+    '/player/login/dashboard',
+    '/player/register/dashboard',
+    '/player/growid/login/dashboard',
+    '/player/growid/register/dashboard',
+    '/player/register',
+  ],
+  async (req: Request, res: Response) => {
+    const body = req.body;
+    let clientData = '';
 
-  // @note body comes as { "key1|val1\nkey2|val2\n...": "" }
-  // @note the actual data is in the first key, pipe-delimited with \n separators
-  if (body && typeof body === 'object' && Object.keys(body).length > 0) {
-    clientData = Object.keys(body)[0];
-  }
+    if (body && typeof body === 'object' && Object.keys(body).length > 0) {
+      clientData = Object.keys(body)[0];
+    }
 
-  // @note convert clientData to base64 string without JSON quotes
-  const encodedClientData = Buffer.from(clientData).toString('base64');
+    const encodedClientData = Buffer.from(clientData).toString('base64');
+    const templatePath = path.join(process.cwd(), 'template', 'dashboard.html');
 
-  // @note read dashboard template and replace placeholder
-  const templatePath = path.join(process.cwd(), 'template', 'dashboard.html');
+    const templateContent = fs.readFileSync(templatePath, 'utf-8');
+    let htmlContent = templateContent.replace('{{ data }}', encodedClientData);
 
-  const templateContent = fs.readFileSync(templatePath, 'utf-8');
-  const htmlContent = templateContent.replace('{{ data }}', encodedClientData);
+    if (req.path.includes('register')) {
+      htmlContent = htmlContent.replace('id="loginForm"', 'id="loginForm" class="hidden"');
+      htmlContent = htmlContent.replace('id="registerForm" action="/player/growid/login/validate"\n        accept-charset="UTF-8" class="hidden"', 'id="registerForm" action="/player/growid/login/validate"\n        accept-charset="UTF-8" class=""');
+      htmlContent = htmlContent.replace('MAGICAL PRIVATE SERVER', 'REGISTER NEW ACCOUNT');
+    }
 
-  res.setHeader('Content-Type', 'text/html');
-  res.send(htmlContent);
-});
+    res.setHeader('Content-Type', 'text/html');
+    res.send(htmlContent);
+  },
+);
 
 /**
- * @note validate login endpoint - validates GrowID credentials
+ * @note validate login/register endpoint - validates GrowID credentials
  * @param req - express request with growId, password, _token
  * @param res - express response with token
  */
 app.all(
-  '/player/growid/login/validate',
+  ['/player/growid/login/validate', '/player/growid/register/validate'],
   async (req: Request, res: Response) => {
     try {
       const formData = req.body as Record<string, string>;
