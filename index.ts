@@ -100,11 +100,17 @@ app.all(
       const growId = formData.growId;
       const password = formData.password;
       const email = formData.email;
+      const actionType = formData.actionType;
+      const isRegister =
+        actionType === 'register' ||
+        Boolean(email) ||
+        Boolean(formData.password_confirmation) ||
+        req.path.includes('register');
 
       let token = '';
-      if (email) {
+      if (isRegister) {
         token = Buffer.from(
-          `_token=${_token}&growId=${growId}&password=${password}&email=${email}&reg=1`,
+          `_token=${_token}&growId=${growId}&password=${password}&email=${email || 'register@growtopia.com'}&reg=1`,
         ).toString('base64');
       } else {
         token = Buffer.from(
