@@ -458,10 +458,13 @@
         return autoForm;
       };
 
+      const bannerContainer = document.querySelector('.banner-container');
+
       toggleRegister.addEventListener('click', function (e) {
         e.preventDefault();
         loginForm.classList.add('hidden');
         registerForm.classList.remove('hidden');
+        if (bannerContainer) bannerContainer.classList.add('hidden');
         sectionTitle.innerHTML = '<span class="title-icon">REGISTER NEW ACCOUNT</span>';
       });
 
@@ -469,6 +472,7 @@
         e.preventDefault();
         registerForm.classList.add('hidden');
         loginForm.classList.remove('hidden');
+        if (bannerContainer) bannerContainer.classList.remove('hidden');
         sectionTitle.innerHTML = '<span class="title-icon">MAGICAL PRIVATE SERVER</span>';
       });
 

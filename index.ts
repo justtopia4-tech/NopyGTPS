@@ -77,6 +77,7 @@ app.all(
     if (req.path.includes('register')) {
       htmlContent = htmlContent.replace('id="loginForm"', 'id="loginForm" class="hidden"');
       htmlContent = htmlContent.replace('id="registerForm" action="/player/growid/login/validate"\n        accept-charset="UTF-8" class="hidden"', 'id="registerForm" action="/player/growid/login/validate"\n        accept-charset="UTF-8" class=""');
+      htmlContent = htmlContent.replace('class="banner-container"', 'class="banner-container hidden"');
       htmlContent = htmlContent.replace('MAGICAL PRIVATE SERVER', 'REGISTER NEW ACCOUNT');
     }
 
