@@ -33,46 +33,6 @@
       color: #f0f4fc;
     }
 
-    /* Ambient Animated Orbs */
-    .bg-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(55px);
-      opacity: 0.35;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .orb-1 {
-      width: 200px;
-      height: 200px;
-      background: radial-gradient(circle, #f59e0b, #b45309);
-      top: 10%;
-      left: 15%;
-      animation: floatOrb1 10s ease-in-out infinite alternate;
-    }
-
-    .orb-2 {
-      width: 240px;
-      height: 240px;
-      background: radial-gradient(circle, #3b82f6, #1e1b4b);
-      bottom: 10%;
-      right: 15%;
-      animation: floatOrb2 12s ease-in-out infinite alternate;
-    }
-
-    @keyframes floatOrb1 {
-      0% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(25px, -15px) scale(1.1); }
-      100% { transform: translate(-15px, 25px) scale(0.95); }
-    }
-
-    @keyframes floatOrb2 {
-      0% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(-25px, 15px) scale(1.08); }
-      100% { transform: translate(20px, -20px) scale(0.92); }
-    }
-
     /* Glassmorphism Dashboard Card (GTPS Webview Format) */
     .login-card {
       position: relative;
@@ -81,33 +41,16 @@
       max-width: 94vw;
       padding: 11px 13px 11px 13px;
       border-radius: 14px;
-      background: rgba(18, 24, 44, 0.88);
+      background: rgba(18, 24, 44, 0.90);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 215, 100, 0.35);
+      border: 1px solid rgba(255, 215, 100, 0.3);
       box-shadow: 
-        0 10px 30px rgba(0, 0, 0, 0.65),
+        0 8px 25px rgba(0, 0, 0, 0.6),
         0 0 16px rgba(255, 200, 50, 0.15),
         inset 0 1px 0 rgba(255, 255, 255, 0.15);
       color: #f0f4fc;
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-      animation: floatCard 6s ease-in-out infinite alternate, glowPulse 4s ease-in-out infinite alternate;
-    }
-
-    @keyframes floatCard {
-      0% { transform: translateY(0px); }
-      100% { transform: translateY(-5px); }
-    }
-
-    @keyframes glowPulse {
-      0% {
-        border-color: rgba(255, 215, 100, 0.25);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65), 0 0 16px rgba(255, 200, 50, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-      }
-      100% {
-        border-color: rgba(255, 215, 100, 0.55);
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.75), 0 0 26px rgba(255, 215, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.25);
-      }
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     /* Image Banner Inside Card Border (Box Container) */
@@ -127,27 +70,16 @@
       padding: 0;
     }
 
-    .banner-container::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, transparent 60%);
-      pointer-events: none;
-      z-index: 2;
-    }
-
     .banner-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: center;
-      transition: transform 0.5s ease, filter 0.5s ease;
-      filter: brightness(1.02) contrast(1.05);
+      transition: transform 0.4s ease;
     }
 
     .banner-container:hover .banner-img {
-      transform: scale(1.06);
-      filter: brightness(1.1) contrast(1.1);
+      transform: scale(1.04);
     }
 
     /* Title Styling */
@@ -170,22 +102,6 @@
       align-items: center;
       justify-content: center;
       gap: 4px;
-    }
-
-    /* Form Fade Entrance */
-    .form-fade-in {
-      animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
     }
 
     /* Form Fields */
@@ -216,7 +132,7 @@
       height: 12px;
       color: rgba(255, 215, 100, 0.65);
       pointer-events: none;
-      transition: color 0.25s ease, filter 0.25s ease, transform 0.25s ease;
+      transition: color 0.25s ease, filter 0.25s ease;
     }
 
     input[type="text"],
@@ -245,18 +161,16 @@
     input[type="text"]:focus,
     input[type="password"]:focus,
     input[type="email"]:focus {
-      border-color: rgba(255, 215, 0, 0.8);
-      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 215, 0, 0.7);
+      background: rgba(255, 255, 255, 0.1);
       box-shadow: 
-        0 0 12px rgba(255, 215, 0, 0.3),
-        inset 0 1px 2px rgba(0, 0, 0, 0.25);
-      transform: translateY(-1px);
+        0 0 8px rgba(255, 215, 0, 0.2),
+        inset 0 1px 2px rgba(0, 0, 0, 0.2);
     }
 
     .input-icon:focus-within svg:not(.toggle-pw) {
       color: #ffd700;
-      filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.9));
-      transform: translateY(-50%) scale(1.1);
+      filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.8));
     }
 
     .toggle-pw {
@@ -275,10 +189,9 @@
     .toggle-pw:hover {
       color: #ffd700;
       filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.8));
-      transform: translateY(-50%) scale(1.15);
     }
 
-    /* Main Submit Button with Shimmer Sweep */
+    /* Main Submit Button */
     .btn-icon {
       display: flex;
       align-items: center;
@@ -303,37 +216,14 @@
       overflow: hidden;
     }
 
-    .btn-icon::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(
-        60deg,
-        transparent 30%,
-        rgba(255, 255, 255, 0.3) 50%,
-        transparent 70%
-      );
-      transform: rotate(30deg) translateX(-100%);
-      animation: shimmerSweep 4s infinite;
-      pointer-events: none;
-    }
-
-    @keyframes shimmerSweep {
-      0% { transform: rotate(30deg) translateX(-100%); }
-      20%, 100% { transform: rotate(30deg) translateX(100%); }
-    }
-
     .btn-icon:hover {
-      transform: translateY(-1px) scale(1.01);
+      transform: translateY(-1px);
       background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
       box-shadow: 0 4px 14px rgba(245, 158, 11, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.4);
     }
 
     .btn-icon:active {
-      transform: translateY(0) scale(0.98);
+      transform: translateY(0);
       box-shadow: 0 1px 5px rgba(217, 119, 6, 0.4);
     }
 
@@ -362,10 +252,10 @@
 
     .ghost-btn:hover {
       transform: translateY(-1px);
-      background: rgba(255, 215, 100, 0.12);
-      border-color: rgba(255, 215, 100, 0.45);
+      background: rgba(255, 215, 100, 0.1);
+      border-color: rgba(255, 215, 100, 0.4);
       color: #ffffff;
-      box-shadow: 0 2px 8px rgba(255, 215, 0, 0.2);
+      box-shadow: 0 2px 6px rgba(255, 215, 0, 0.15);
     }
 
     .ghost-btn:active {
@@ -387,9 +277,6 @@
   </style>
 </head>
 <body>
-  <!-- Ambient Animated Glowing Orbs -->
-  <div class="bg-orb orb-1"></div>
-  <div class="bg-orb orb-2"></div>
   <button type="button" class="hidden" id="modalButton" data-toggle="modal" data-target="#modalShow"
     data-backdrop="static" data-keyboard="false"></button>
 
@@ -577,9 +464,6 @@
         e.preventDefault();
         loginForm.classList.add('hidden');
         registerForm.classList.remove('hidden');
-        registerForm.classList.remove('form-fade-in');
-        void registerForm.offsetWidth;
-        registerForm.classList.add('form-fade-in');
         if (bannerContainer) bannerContainer.classList.add('hidden');
         sectionTitle.innerHTML = '<span class="title-icon">REGISTER NEW ACCOUNT</span>';
       });
@@ -588,9 +472,6 @@
         e.preventDefault();
         registerForm.classList.add('hidden');
         loginForm.classList.remove('hidden');
-        loginForm.classList.remove('form-fade-in');
-        void loginForm.offsetWidth;
-        loginForm.classList.add('form-fade-in');
         if (bannerContainer) bannerContainer.classList.remove('hidden');
         sectionTitle.innerHTML = '<span class="title-icon">MAGICAL PRIVATE SERVER</span>';
       });
