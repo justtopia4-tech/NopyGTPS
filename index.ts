@@ -15,10 +15,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-// @note rate limiter - 50 requests per minute
+// @note rate limiter - 300 requests per minute to prevent CGNAT/cellular data blocking
 const limiter = rateLimit({
   windowMs: 60_000,
-  max: 50,
+  max: 300,
   standardHeaders: true,
   legacyHeaders: false,
   validate: { trustProxy: false, xForwardedForHeader: false },
