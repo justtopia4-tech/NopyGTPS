@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
 import fs from 'fs';
@@ -11,6 +12,7 @@ const PORT = 3000;
 app.set('trust proxy', 1);
 
 // @note middleware setup
+app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
@@ -25,8 +27,27 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// @note static files from public folder
-app.use(express.static(path.join(process.cwd(), 'public')));
+// @note static files from public folder with 1-day client-side caching
+app.use(express.static(path.join(process.cwd(), 'public'), { maxAge: '1d', etag: true }));
+
+// @note in-memory template cache for dashboard HTML
+const templatePath = path.join(process.cwd(), 'template', 'dashboard.html');
+let templateContent = '';
+try {
+  templateContent = fs.readFileSync(templatePath, 'utf-8');
+} catch (err) {
+  console.error('[ERROR] Failed to load dashboard template:', err);
+}
+
+const loginTemplate = templateContent;
+const registerTemplate = templateContent
+  .replace('id="loginForm"', 'id="loginForm" class="hidden"')
+  .replace(
+    'id="registerForm" action="/player/growid/login/validate"\n        accept-charset="UTF-8" class="hidden"',
+    'id="registerForm" action="/player/growid/login/validate"\n        accept-charset="UTF-8" class=""',
+  )
+  .replace('class="banner-container"', 'class="banner-container hidden"')
+  .replace('MAGICAL PRIVATE SERVER', 'REGISTER NEW ACCOUNT');
 
 // @note request logging middleware
 app.use((req: Request, _res: Response, next: NextFunction) => {
@@ -60,7 +81,7 @@ app.all(
     '/player/growid/register/dashboard',
     '/player/register',
   ],
-  async (req: Request, res: Response) => {
+  (req: Request, res: Response) => {
     const body = req.body;
     let clientData = '';
 
@@ -69,17 +90,9 @@ app.all(
     }
 
     const encodedClientData = Buffer.from(clientData).toString('base64');
-    const templatePath = path.join(process.cwd(), 'template', 'dashboard.html');
-
-    const templateContent = fs.readFileSync(templatePath, 'utf-8');
-    let htmlContent = templateContent.replace('{{ data }}', encodedClientData);
-
-    if (req.path.includes('register')) {
-      htmlContent = htmlContent.replace('id="loginForm"', 'id="loginForm" class="hidden"');
-      htmlContent = htmlContent.replace('id="registerForm" action="/player/growid/login/validate"\n        accept-charset="UTF-8" class="hidden"', 'id="registerForm" action="/player/growid/login/validate"\n        accept-charset="UTF-8" class=""');
-      htmlContent = htmlContent.replace('class="banner-container"', 'class="banner-container hidden"');
-      htmlContent = htmlContent.replace('MAGICAL PRIVATE SERVER', 'REGISTER NEW ACCOUNT');
-    }
+    const isRegister = req.path.includes('register');
+    const baseHtml = isRegister ? registerTemplate : loginTemplate;
+    const htmlContent = baseHtml.replace('{{ data }}', encodedClientData);
 
     res.setHeader('Content-Type', 'text/html');
     res.send(htmlContent);
