@@ -1,6 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
 import fs from 'fs';
@@ -8,49 +7,26 @@ import fs from 'fs';
 const app = express();
 const PORT = 3000;
 
-// @note disable x-powered-by header for security and response byte reduction
-app.disable('x-powered-by');
-
 // @note trust proxy - set to number of proxies in front of app
 app.set('trust proxy', 1);
 
 // @note middleware setup
-app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-// @note rate limiter - 300 requests per minute to prevent CGNAT/cellular data blocking
+// @note rate limiter - 50 requests per minute
 const limiter = rateLimit({
   windowMs: 60_000,
-  max: 300,
+  max: 50,
   standardHeaders: true,
   legacyHeaders: false,
   validate: { trustProxy: false, xForwardedForHeader: false },
 });
 app.use(limiter);
 
-// @note static files from public folder with 1-day client-side caching
-app.use(express.static(path.join(process.cwd(), 'public'), { maxAge: '1d', etag: true }));
-
-// @note in-memory template cache for dashboard HTML
-const templatePath = path.join(process.cwd(), 'template', 'dashboard.html');
-let templateContent = '';
-try {
-  templateContent = fs.readFileSync(templatePath, 'utf-8');
-} catch (err) {
-  console.error('[ERROR] Failed to load dashboard template:', err);
-}
-
-const loginTemplate = templateContent;
-const registerTemplate = templateContent
-  .replace('id="loginForm"', 'id="loginForm" class="hidden"')
-  .replace(
-    'id="registerForm" action="/player/growid/login/validate"\n        accept-charset="UTF-8" class="hidden"',
-    'id="registerForm" action="/player/growid/login/validate"\n        accept-charset="UTF-8" class=""',
-  )
-  .replace('class="banner-container"', 'class="banner-container hidden"')
-  .replace('MAGICAL PRIVATE SERVER', 'REGISTER NEW ACCOUNT');
+// @note static files from public folder
+app.use(express.static(path.join(process.cwd(), 'public')));
 
 // @note request logging middleware
 app.use((req: Request, _res: Response, next: NextFunction) => {
@@ -76,39 +52,36 @@ app.get('/', (_req: Request, res: Response) => {
  * @param req - express request with optional body data
  * @param res - express response
  */
-app.all(
-  [
-    '/player/login/dashboard',
-    '/player/register/dashboard',
-    '/player/growid/login/dashboard',
-    '/player/growid/register/dashboard',
-    '/player/register',
-  ],
-  (req: Request, res: Response) => {
-    const body = req.body;
-    let clientData = '';
+app.all('/player/login/dashboard', async (req: Request, res: Response) => {
+  const body = req.body;
+  let clientData = '';
 
-    if (body && typeof body === 'object' && Object.keys(body).length > 0) {
-      clientData = Object.keys(body)[0];
-    }
+  // @note body comes as { "key1|val1\nkey2|val2\n...": "" }
+  // @note the actual data is in the first key, pipe-delimited with \n separators
+  if (body && typeof body === 'object' && Object.keys(body).length > 0) {
+    clientData = Object.keys(body)[0];
+  }
 
-    const encodedClientData = Buffer.from(clientData).toString('base64');
-    const isRegister = req.path.includes('register');
-    const baseHtml = isRegister ? registerTemplate : loginTemplate;
-    const htmlContent = baseHtml.replace('{{ data }}', encodedClientData);
+  // @note convert clientData to base64 string without JSON quotes
+  const encodedClientData = Buffer.from(clientData).toString('base64');
 
-    res.setHeader('Content-Type', 'text/html');
-    res.send(htmlContent);
-  },
-);
+  // @note read dashboard template and replace placeholder
+  const templatePath = path.join(process.cwd(), 'template', 'dashboard.html');
+
+  const templateContent = fs.readFileSync(templatePath, 'utf-8');
+  const htmlContent = templateContent.replace('{{ data }}', encodedClientData);
+
+  res.setHeader('Content-Type', 'text/html');
+  res.send(htmlContent);
+});
 
 /**
- * @note validate login/register endpoint - validates GrowID credentials
+ * @note validate login endpoint - validates GrowID credentials
  * @param req - express request with growId, password, _token
  * @param res - express response with token
  */
 app.all(
-  ['/player/growid/login/validate', '/player/growid/register/validate'],
+  '/player/growid/login/validate',
   async (req: Request, res: Response) => {
     try {
       const formData = req.body as Record<string, string>;
@@ -116,17 +89,11 @@ app.all(
       const growId = formData.growId;
       const password = formData.password;
       const email = formData.email;
-      const actionType = formData.actionType;
-      const isRegister =
-        actionType === 'register' ||
-        Boolean(email) ||
-        Boolean(formData.password_confirmation) ||
-        req.path.includes('register');
 
       let token = '';
-      if (isRegister) {
+      if (email) {
         token = Buffer.from(
-          `_token=${_token}&growId=${growId}&password=${password}&email=${email || 'register@growtopia.com'}&reg=1`,
+          `_token=${_token}&growId=${growId}&password=${password}&email=${email}&reg=1`,
         ).toString('base64');
       } else {
         token = Buffer.from(
@@ -134,13 +101,15 @@ app.all(
         ).toString('base64');
       }
 
-      res.json({
-        status: 'success',
-        message: 'Account Validated.',
-        token,
-        url: '',
-        accountType: 'growtopia',
-      });
+      res.send(
+        JSON.stringify({
+          status: 'success',
+          message: 'Account Validated.',
+          token,
+          url: '',
+          accountType: 'growtopia',
+        }),
+      );
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
       res.status(500).json({
@@ -253,14 +222,16 @@ app.all(
         ),
       ).toString('base64');
 
-      res.json({
-        status: 'success',
-        message: 'Account Validated.',
-        token,
-        url: '',
-        accountType: 'growtopia',
-        accountAge: 2,
-      });
+      res.send(
+        JSON.stringify({
+          status: 'success',
+          message: 'Account Validated.',
+          token,
+          url: '',
+          accountType: 'growtopia',
+          accountAge: 2,
+        }),
+      );
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
       res.status(200).json({
