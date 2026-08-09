@@ -8,6 +8,9 @@ import fs from 'fs';
 const app = express();
 const PORT = 3000;
 
+// @note disable x-powered-by header for security and response byte reduction
+app.disable('x-powered-by');
+
 // @note trust proxy - set to number of proxies in front of app
 app.set('trust proxy', 1);
 
@@ -131,15 +134,13 @@ app.all(
         ).toString('base64');
       }
 
-      res.send(
-        JSON.stringify({
-          status: 'success',
-          message: 'Account Validated.',
-          token,
-          url: '',
-          accountType: 'growtopia',
-        }),
-      );
+      res.json({
+        status: 'success',
+        message: 'Account Validated.',
+        token,
+        url: '',
+        accountType: 'growtopia',
+      });
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
       res.status(500).json({
@@ -252,16 +253,14 @@ app.all(
         ),
       ).toString('base64');
 
-      res.send(
-        JSON.stringify({
-          status: 'success',
-          message: 'Account Validated.',
-          token,
-          url: '',
-          accountType: 'growtopia',
-          accountAge: 2,
-        }),
-      );
+      res.json({
+        status: 'success',
+        message: 'Account Validated.',
+        token,
+        url: '',
+        accountType: 'growtopia',
+        accountAge: 2,
+      });
     } catch (error) {
       console.log(`[ERROR]: ${error}`);
       res.status(200).json({
