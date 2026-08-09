@@ -246,6 +246,11 @@ app.all(
         decodedRefreshToken = decodedRefreshToken.replace('&reg=1', '');
       }
 
+      // @note ensure port 55000 is not appended in GTPS HTTP context
+      if (decodedRefreshToken.includes(':55000')) {
+        decodedRefreshToken = decodedRefreshToken.replace(/:55000/g, '');
+      }
+
       const token = Buffer.from(
         decodedRefreshToken.replace(
           /(_token=)[^&]*/,
