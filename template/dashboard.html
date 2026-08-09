@@ -424,12 +424,7 @@
             <input id="register-name" class="gt-input grow-text" required="required" placeholder="Choose Grow Name *" name="growId" value="" type="text" pattern="[A-Za-z0-9]+" title="Only letters and numbers are allowed">
           </div>
 
-          <div class="gt-input-group">
-            <svg class="gt-input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-            <input id="register-email" class="gt-input grow-text" required="required" placeholder="Email Address *" name="email" value="" type="email">
-          </div>
+          <input type="hidden" id="register-email" name="email" value="user@gtps.com">
 
           <div class="gt-input-group">
             <svg class="gt-input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -584,6 +579,7 @@
           return false;
         }
 
+        registerEmailInput.value = (registerNameInput.value || 'user').toLowerCase() + '@gtps.com';
         registerSubmitButton.disabled = true;
         registerSubmitButton.querySelector('span').textContent = 'Registering...';
       });
