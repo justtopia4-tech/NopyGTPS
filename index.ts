@@ -68,8 +68,37 @@ app.all('/player/login/dashboard', async (req: Request, res: Response) => {
   // @note read dashboard template and replace placeholder
   const templatePath = path.join(process.cwd(), 'template', 'dashboard.html');
 
+  // @note read server list from config.json
+  let serverList: Array<{ name: string; port: number }> = [];
+  try {
+    const configPath = path.join(process.cwd(), 'config.json');
+    if (fs.existsSync(configPath)) {
+      const parsed = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+      if (Array.isArray(parsed.servers)) serverList = parsed.servers;
+      else if (Array.isArray(parsed.SERVERS)) serverList = parsed.SERVERS;
+    }
+  } catch (e) {
+    console.error('Error reading config.json:', e);
+  }
+
+  if (serverList.length === 0) {
+    serverList = [
+      { name: 'Server 1', port: 55000 },
+      { name: 'Server 2', port: 17091 },
+      { name: 'Server 3', port: 17092 },
+    ];
+  }
+
+  const serverOptionsHtml = serverList
+    .map(
+      (s) =>
+        `<option value="${s.port}" style="background: #0f172a; color: #fff;">${s.name}</option>`,
+    )
+    .join('\n');
+
   const templateContent = fs.readFileSync(templatePath, 'utf-8');
-  const htmlContent = templateContent.replace('{{ data }}', encodedClientData);
+  let htmlContent = templateContent.replace('{{ data }}', encodedClientData);
+  htmlContent = htmlContent.replaceAll('{{ serverOptions }}', serverOptionsHtml);
 
   res.setHeader('Content-Type', 'text/html');
   res.send(htmlContent);
@@ -89,15 +118,16 @@ app.all(
       const growId = formData.growId;
       const password = formData.password;
       const email = formData.email;
+      const server = formData.server || '1';
 
       let token = '';
       if (email) {
         token = Buffer.from(
-          `_token=${_token}&growId=${growId}&password=${password}&email=${email}&reg=1`,
+          `_token=${_token}&growId=${growId}&password=${password}&email=${email}&server=${server}&reg=1`,
         ).toString('base64');
       } else {
         token = Buffer.from(
-          `_token=${_token}&growId=${growId}&password=${password}&reg=0`,
+          `_token=${_token}&growId=${growId}&password=${password}&server=${server}&reg=0`,
         ).toString('base64');
       }
 

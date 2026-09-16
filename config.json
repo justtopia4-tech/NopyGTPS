@@ -1,0 +1,16 @@
+﻿{
+  "servers": [
+    {
+      "name": "Server 1",
+      "port": 55000
+    },
+    {
+      "name": "Server 2",
+      "port": 17091
+    },
+    {
+      "name": "Server 3",
+      "port": 17092
+    }
+  ]
+}
