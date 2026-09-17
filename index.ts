@@ -139,7 +139,7 @@ app.all('/player/login/dashboard', async (req: Request, res: Response) => {
   // @note read server list dynamically in real-time
   const serverList = getServerList();
   const defaultServer = '';
-  const serverPlaceholder = 'Masukin Nama Server *';
+  const serverPlaceholder = 'Name Server *';
 
   const serverDatalistHtml = serverList
     .map(
