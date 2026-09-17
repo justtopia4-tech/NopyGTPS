@@ -89,16 +89,16 @@ app.all('/player/login/dashboard', async (req: Request, res: Response) => {
     ];
   }
 
-  const serverOptionsHtml = serverList
+  const serverDatalistHtml = serverList
     .map(
       (s) =>
-        `<option value="${s.port}" style="background: #0f172a; color: #fff;">${s.name}</option>`,
+        `<option value="${s.name}">`,
     )
     .join('\n');
 
   const templateContent = fs.readFileSync(templatePath, 'utf-8');
   let htmlContent = templateContent.replace('{{ data }}', encodedClientData);
-  htmlContent = htmlContent.replaceAll('{{ serverOptions }}', serverOptionsHtml);
+  htmlContent = htmlContent.replaceAll('{{ serverDatalist }}', serverDatalistHtml);
 
   res.setHeader('Content-Type', 'text/html');
   res.send(htmlContent);

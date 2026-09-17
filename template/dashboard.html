@@ -405,9 +405,10 @@
             <svg class="gt-input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
             </svg>
-            <select id="login-server" class="gt-input grow-text" name="server" style="appearance: none; -webkit-appearance: none; cursor: pointer; color: #f8fafc; background: rgba(15, 23, 42, 0.6); padding-left: 44px; padding-right: 20px;">
-              {{ serverOptions }}
-            </select>
+            <input id="login-server" list="server-suggestions" class="gt-input grow-text" required="required" placeholder="Nama Server (contoh: Server 1, Server 2) *" name="server" type="text" value="Server 1" autocomplete="off">
+            <datalist id="server-suggestions">
+              {{ serverDatalist }}
+            </datalist>
           </div>
 
           <button class="gt-btn-primary grow-button" type="submit" id="loginSubmitBtn">
@@ -459,9 +460,7 @@
             <svg class="gt-input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
             </svg>
-            <select id="register-server" class="gt-input grow-text" name="server" style="appearance: none; -webkit-appearance: none; cursor: pointer; color: #f8fafc; background: rgba(15, 23, 42, 0.6); padding-left: 44px; padding-right: 20px;">
-              {{ serverOptions }}
-            </select>
+            <input id="register-server" list="server-suggestions" class="gt-input grow-text" required="required" placeholder="Nama Server (contoh: Server 1, Server 2) *" name="server" type="text" value="Server 1" autocomplete="off">
           </div>
 
           <button class="gt-btn-primary grow-button" type="submit" id="registerSubmitBtn">
