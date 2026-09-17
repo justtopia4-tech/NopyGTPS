@@ -48,6 +48,74 @@ app.get('/', (_req: Request, res: Response) => {
 });
 
 /**
+ * @note dynamically load server list from candidate config paths in real-time
+ * checks both game server database config and local dashboard config,
+ * prioritizing the most recently modified file so changes in config.json are instant.
+ */
+function getServerList(): Array<{ name: string; port: number }> {
+  const candidatePaths = [
+    path.join(process.cwd(), '..', 'MagicalPS', 'MagicalPS', 'Core', 'x64', 'Release', 'database', 'config.json'),
+    path.join(process.cwd(), '..', 'MagicalPS', 'Core', 'x64', 'Release', 'database', 'config.json'),
+    path.join(process.cwd(), '..', 'Core', 'x64', 'Release', 'database', 'config.json'),
+    path.join(process.cwd(), '..', 'Release', 'database', 'config.json'),
+    'C:\\Users\\Administrator\\Downloads\\MagicalPS\\MagicalPS\\Core\\x64\\Release\\database\\config.json',
+    path.join(process.cwd(), 'database', 'config.json'),
+    path.join(process.cwd(), '..', 'database', 'config.json'),
+    path.join(process.cwd(), 'config.json'),
+  ];
+
+  const existingFiles: Array<{ path: string; mtime: number }> = [];
+  for (const p of candidatePaths) {
+    try {
+      if (fs.existsSync(p)) {
+        const stat = fs.statSync(p);
+        existingFiles.push({ path: p, mtime: stat.mtimeMs });
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  // Sort by newest modified time
+  existingFiles.sort((a, b) => b.mtime - a.mtime);
+
+  for (const item of existingFiles) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(item.path, 'utf-8'));
+      const servers = parsed.SERVERS || parsed.servers;
+      if (Array.isArray(servers) && servers.length > 0) {
+        // Automatically keep local config.json in sync if another config was newer
+        const localConfigPath = path.join(process.cwd(), 'config.json');
+        if (path.resolve(item.path) !== path.resolve(localConfigPath) && fs.existsSync(localConfigPath)) {
+          try {
+            fs.writeFileSync(localConfigPath, JSON.stringify({ servers }, null, 2), 'utf-8');
+          } catch {}
+        }
+        return servers;
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  return [
+    { name: 'Glow', port: 55000 },
+    { name: 'MarioPS', port: 17091 },
+    { name: 'NexusPS', port: 17092 },
+  ];
+}
+
+/**
+ * @note api endpoint to inspect servers in real time
+ */
+app.get('/api/servers', (_req: Request, res: Response) => {
+  res.json({
+    status: 'success',
+    servers: getServerList(),
+  });
+});
+
+/**
  * @note dashboard endpoint - serves login HTML page with client data
  * @param req - express request with optional body data
  * @param res - express response
@@ -68,26 +136,11 @@ app.all('/player/login/dashboard', async (req: Request, res: Response) => {
   // @note read dashboard template and replace placeholder
   const templatePath = path.join(process.cwd(), 'template', 'dashboard.html');
 
-  // @note read server list from config.json
-  let serverList: Array<{ name: string; port: number }> = [];
-  try {
-    const configPath = path.join(process.cwd(), 'config.json');
-    if (fs.existsSync(configPath)) {
-      const parsed = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-      if (Array.isArray(parsed.servers)) serverList = parsed.servers;
-      else if (Array.isArray(parsed.SERVERS)) serverList = parsed.SERVERS;
-    }
-  } catch (e) {
-    console.error('Error reading config.json:', e);
-  }
-
-  if (serverList.length === 0) {
-    serverList = [
-      { name: 'Server 1', port: 55000 },
-      { name: 'Server 2', port: 17091 },
-      { name: 'Server 3', port: 17092 },
-    ];
-  }
+  // @note read server list dynamically in real-time
+  const serverList = getServerList();
+  const defaultServer = serverList.length > 0 ? serverList[0].name : '';
+  const exampleNames = serverList.map((s) => s.name).slice(0, 2).join(', ');
+  const serverPlaceholder = `Nama Server${exampleNames ? ` (contoh: ${exampleNames})` : ''} *`;
 
   const serverDatalistHtml = serverList
     .map(
@@ -97,8 +150,11 @@ app.all('/player/login/dashboard', async (req: Request, res: Response) => {
     .join('\n');
 
   const templateContent = fs.readFileSync(templatePath, 'utf-8');
-  let htmlContent = templateContent.replace('{{ data }}', encodedClientData);
-  htmlContent = htmlContent.replaceAll('{{ serverDatalist }}', serverDatalistHtml);
+  let htmlContent = templateContent
+    .replace('{{ data }}', encodedClientData)
+    .replaceAll('{{ defaultServer }}', defaultServer)
+    .replaceAll('{{ serverPlaceholder }}', serverPlaceholder)
+    .replaceAll('{{ serverDatalist }}', serverDatalistHtml);
 
   res.setHeader('Content-Type', 'text/html');
   res.send(htmlContent);
@@ -118,7 +174,9 @@ app.all(
       const growId = formData.growId;
       const password = formData.password;
       const email = formData.email;
-      const server = formData.server || '1';
+      const serverList = getServerList();
+      const defaultServer = serverList.length > 0 ? serverList[0].name : '1';
+      const server = formData.server || defaultServer;
 
       let token = '';
       if (email) {
