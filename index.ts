@@ -139,8 +139,7 @@ app.all('/player/login/dashboard', async (req: Request, res: Response) => {
   // @note read server list dynamically in real-time
   const serverList = getServerList();
   const defaultServer = '';
-  const exampleNames = serverList.map((s) => s.name).slice(0, 2).join(', ');
-  const serverPlaceholder = `Masukin Nama Server${exampleNames ? ` (contoh: ${exampleNames})` : ''} *`;
+  const serverPlaceholder = 'Masukin Nama Server *';
 
   const serverDatalistHtml = serverList
     .map(
