@@ -1,15 +1,15 @@
-﻿{
+{
   "servers": [
     {
-      "name": "Server 1",
+      "name": "Glow",
       "port": 55000
     },
     {
-      "name": "Server 2",
+      "name": "MarioPS",
       "port": 17091
     },
     {
-      "name": "Server 3",
+      "name": "NexusPS",
       "port": 17092
     }
   ]
