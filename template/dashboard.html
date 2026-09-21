@@ -67,19 +67,66 @@
       margin: 10px auto !important;
     }
 
-    .modal-body,
-    .content {
-      padding: 0 !important;
+    /* Animated Rotating Living Border for Dashboard */
+    .product-list-popup .modal-content {
+      position: relative !important;
+      overflow: hidden !important;
+      border-radius: 12px !important;
+      border: none !important;
+      background: transparent !important;
+      box-shadow: 0 0 25px rgba(0, 184, 255, 0.45), 0 10px 30px rgba(0, 0, 0, 0.7) !important;
+      padding: 3px !important; /* Ketebalan garis tepi berputar */
+    }
+
+    .product-list-popup .modal-content::before {
+      content: '' !important;
+      position: absolute !important;
+      top: -50% !important;
+      left: -50% !important;
+      width: 200% !important;
+      height: 200% !important;
+      background: conic-gradient(
+        transparent 0deg,
+        transparent 40deg,
+        #00b8ff 90deg,
+        #38bdf8 135deg,
+        #27fd04 180deg,
+        #38bdf8 225deg,
+        #00b8ff 270deg,
+        transparent 320deg,
+        transparent 360deg
+      ) !important;
+      animation: rotateBorder 4s linear infinite !important;
+      z-index: 0 !important;
+    }
+
+    .product-list-popup .modal-content .modal-body {
+      position: relative !important;
+      z-index: 1 !important;
+      background: rgba(18, 48, 77, 0.96) !important;
+      border-radius: 9px !important;
+      padding: 16px 12px !important;
       width: 100% !important;
       max-width: 100% !important;
     }
 
+    @keyframes rotateBorder {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .content,
     .common-box,
     .container {
+      background: transparent !important;
       width: 100% !important;
       max-width: 100% !important;
-      padding-left: 8px !important;
-      padding-right: 8px !important;
+      padding-left: 6px !important;
+      padding-right: 6px !important;
     }
 
     .div-content-center {
@@ -213,6 +260,10 @@
         max-width: 370px !important;
         width: 92% !important;
         margin: 8px auto !important;
+      }
+
+      .product-list-popup .modal-content .modal-body {
+        padding: 12px 8px !important;
       }
 
       .section-title h2 {
