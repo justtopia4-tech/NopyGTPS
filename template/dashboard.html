@@ -73,8 +73,8 @@
       overflow: hidden !important;
       border-radius: 12px !important;
       border: none !important;
-      background: transparent !important;
-      box-shadow: 0 0 25px rgba(0, 184, 255, 0.45), 0 10px 30px rgba(0, 0, 0, 0.7) !important;
+      background: rgba(255, 255, 255, 0.2) !important;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.45), 0 0 45px rgba(255, 255, 255, 0.2) !important;
       padding: 3px !important; /* Ketebalan garis tepi berputar */
     }
 
@@ -86,15 +86,15 @@
       width: 200% !important;
       height: 200% !important;
       background: conic-gradient(
-        transparent 0deg,
-        transparent 40deg,
-        #00b8ff 90deg,
-        #38bdf8 135deg,
-        #00f0ff 180deg,
-        #38bdf8 225deg,
-        #00b8ff 270deg,
-        transparent 320deg,
-        transparent 360deg
+        rgba(255, 255, 255, 0) 0deg,
+        rgba(255, 255, 255, 0) 45deg,
+        rgba(255, 255, 255, 0.3) 100deg,
+        rgba(255, 255, 255, 0.8) 150deg,
+        #ffffff 180deg,
+        rgba(255, 255, 255, 0.8) 210deg,
+        rgba(255, 255, 255, 0.3) 260deg,
+        rgba(255, 255, 255, 0) 315deg,
+        rgba(255, 255, 255, 0) 360deg
       ) !important;
       animation: rotateBorder 4s linear infinite !important;
       z-index: 0 !important;
